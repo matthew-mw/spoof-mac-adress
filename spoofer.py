@@ -1,16 +1,12 @@
 import secrets
 import subprocess
 
-changed = False
+unchanged = True
 
-while not changed:
+while unchanged:
 
-    parts = [hex(secrets.randbelow(256)).split("0x")[1].zfill(2) for part in range(6)]
+    new_adress = ":".join([secrets.token_hex(1) for _ in range(6)])
 
-    new_adress = ":".join(parts)
-
-    subprocess.run(["sudo", "ifconfig", "en0", "ether", new_adress])
-
-    changed = subprocess.getoutput("ifconfig en0 ether").split("ether ")[1].split()[0] == new_adress
+    unchanged = subprocess.run(["sudo", "ifconfig", "en0", "ether", new_adress]).returncode
 
 print(f"New mac adress: {new_adress}")
